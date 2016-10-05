@@ -28,7 +28,7 @@ public class BasicStreamsTest {
 
     @Test
     public void basicReduction() {
-        List<Integer> list = ListProvider.integerList(0, 100);
+        List<Integer> list = ListProvider.integerList(0, 4);
         int sumOne = list.stream()
             .reduce(
                 0,
@@ -48,12 +48,11 @@ public class BasicStreamsTest {
 
     @Test
     public void reducingToCollection() {
-        List<Integer> ints = ListProvider.integerList(0, 50);
+        List<Integer> ints = ListProvider.integerList(0, 5);
         List<Integer> doubled = ints.stream()
             .map(i -> i * 2)
             .reduce(
-                new ArrayList<Integer>(),
-                (list, element) -> {
+                new ArrayList<Integer>(), (list, element) -> {
                     list.add(element);
                     return list;
                 },
@@ -77,32 +76,32 @@ public class BasicStreamsTest {
 
     @Test
     public void basicCollectors() {
-        List<Integer> ints = ListProvider.integerList(0, 50);
-        long count = ints.stream()
-            .collect(Collectors.counting());
-        System.out.println(count);
-
-        List<Integer> toList = ints.stream()
-            .collect(Collectors.toList());
-
-        Set<Integer> toSet = ints.stream()
-            .collect(Collectors.toSet());
-        
-        Map<Integer, Integer> mapSquares = ints.stream()
-            .collect(Collectors.toMap(
-                            e -> e, // mapowanie kluczy 
-                            e -> e * e // mapowanie wartosci
-                            ));
-        System.out.println(mapSquares);
-        
-        String allValues = ints.stream()
-            .map(e -> e.toString())
-            .collect(Collectors.joining(","));
-        System.out.println(allValues);
+        List<Integer> ints = ListProvider.integerList(1, 10);
+//        long count = ints.stream()
+//            .collect(Collectors.counting());
+//        System.out.println(count);
+//
+//        List<Integer> toList = ints.stream()
+//            .collect(Collectors.toList());
+//
+//        Set<Integer> toSet = ints.stream()
+//            .collect(Collectors.toSet());
+//        
+//        Map<Integer, String> mapSquares = ints.stream()
+//            .collect(Collectors.toMap(
+//                            e -> e, // mapowanie kluczy 
+//                            e -> e.toString() // mapowanie wartosci
+//                            ));
+//        System.out.println(mapSquares);
+//        
+//        String allValues = ints.stream()
+//            .map(e -> e.toString())
+//            .collect(Collectors.joining(","));
+//        System.out.println(allValues);
         
         Map<Integer, List<Integer>> grouped =
             ints.stream()
-                .collect(Collectors.groupingBy(e -> e % 16));
+                .collect(Collectors.groupingBy(e -> e % 3));
 
         System.out.println(grouped);
     }
