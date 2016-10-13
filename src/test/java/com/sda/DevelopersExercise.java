@@ -2,16 +2,22 @@ package com.sda;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.junit.Test;
 
 /**
  * Uzywajac do tej pory poznanych techinik.
  * Lista devevlopers zawiera 10 {@code Developer}. Twoim zadaniem jest uzyskanie
  * nastepujacych informacji. W nawasie przedstawiona jest oczekiwana forma danych:
- *  - Jakie jezyki znaja nasi Developerzy? (List<String>)
- *  - Ilu jest developerow? (int)
- *  - Pogrupuj developerow ze wzgledu na imiona (Map<String, List<Developer>);
- *  - Ile osob zna dana technologie? (Map<String, Integer>)
+ *  DONE STREAM Jakie jezyki znaja nasi Developerzy? (List<String>)
+ *  DONE Ilu jest developerow? (int)
+ *  DONE UGLY Pogrupuj developerow ze wzgledu na imiona (Map<String, List<Developer>);
+ *  DONE STREAM Ile osob zna dana technologie? (Map<String, Integer>)
  *  - Ktory developer jest najstarszy? (Developer)
  *  - Ktory developer jest najmlodszy? (Developer)
  *  - Ktora technologia jest najpopularniejsza? (String)
@@ -19,10 +25,55 @@ import java.util.List;
  */
 public class DevelopersExercise {
 
-    public void developers() {
-        List<Developer> developers = this.createDevelopers(); // Lista
-                                                              // developerów
+	@Test
+	public void testListOfTechnologies() {
+		List<Developer> developers = this.createDevelopers();
+		developers.stream()
+		.flatMap(l -> l.getTechnologies().stream())
+		.map(t -> t.toLowerCase())
+		.distinct().sorted()
+		.forEach(System.out::println);
+	}
+	
+	@Test
+	public void testNumberOfDevs() {
+		List<Developer> developers = this.createDevelopers();
+		System.out.println(developers.size());
+	}
+	
+	@Test
+	public void testGroupDevsByName() {
+		List<Developer> developers = this.createDevelopers();
+		Map<String, List<Developer>> devs = new HashMap<>();
+		for(Developer dev : developers) {
+			List<Developer> mergedList = devs.getOrDefault(dev.getName(), new ArrayList<Developer>());
+			mergedList.add(dev);
+			devs.put(dev.getName(), mergedList);
+		}
+		List<String> names = developers.stream()
+				.map(d -> d.getName()).distinct()
+				.collect(Collectors.toList());
+		for(String name: names) {
+			System.out.println(name + " " + devs.get(name).size());
+		}
+	}
 
+	@Test
+	public void howManyPeopleKnowsTech() {
+		List<Developer> developers = this.createDevelopers();
+		Map<String, Long> technologiesPopularity = developers.stream()
+			.flatMap(dev -> dev.getTechnologies().stream())
+			.map(tech -> tech.toLowerCase()).
+			collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+		for(String tech : technologiesPopularity.keySet()) {
+			System.out.println(tech + " " + technologiesPopularity.get(tech));
+		}
+		
+	}
+	
+	public void developers() {
+        List<Developer> developers = this.createDevelopers(); // Lista developerów
     }
 
     private List<Developer> createDevelopers() {
